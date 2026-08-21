@@ -1,0 +1,18 @@
+# Secrets — NEVER commit
+.streamlit/secrets.toml
+*.json
+!package.json
+service_account*.json
+*.key
+
+# Generated output
+output/
+*_chat.txt
+*_FAQ.docx
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
