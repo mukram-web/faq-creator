@@ -148,6 +148,6 @@ if res:
                     st.error(f"{type(e).__name__}: {e}")
 
     with st.expander("Preview the 15 Q&A"):
-        for i, (q, a) in enumerate(res["faqs"], 1):
-            st.markdown(f"**Q{i}. {q}**")
+        for q, a in res["faqs"]:
+            st.markdown(f"**Q. {q}**")
             st.write(a)

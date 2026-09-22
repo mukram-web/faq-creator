@@ -253,11 +253,11 @@ def build_docx(session: dict, out_path: Path):
     _run(p, session["source"], size=10, color=GREY, italic=True)
 
     # Q&A
-    for i, (q, a) in enumerate(session["faqs"], 1):
+    for q, a in session["faqs"]:
         h = doc.add_paragraph()
         h.paragraph_format.keep_with_next = True
         h.paragraph_format.space_before = Pt(11); h.paragraph_format.space_after = Pt(3)
-        _run(h, f"Q{i}.  ", size=12, color=ACCENT, bold=True)
+        _run(h, "Q.  ", size=12, color=ACCENT, bold=True)
         _run(h, q, size=12, color=NAVY, bold=True)
         b = doc.add_paragraph()
         b.paragraph_format.space_after = Pt(3); b.paragraph_format.line_spacing = 1.15

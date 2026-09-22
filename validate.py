@@ -36,8 +36,8 @@ def validate(path):
     else:
         for idx in range(15):
             q, a = qa[idx * 2], qa[idx * 2 + 1]
-            if not q.text.strip().startswith(f"Q{idx + 1}."):
-                errors.append(f"Q{idx + 1} heading malformed: {q.text[:50]!r}")
+            if not q.text.strip().startswith("Q."):
+                errors.append(f"Q heading {idx + 1} malformed: {q.text[:50]!r}")
             if not a.text.strip().startswith("A."):
                 errors.append(f"A{idx + 1} malformed: {a.text[:50]!r}")
 
