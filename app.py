@@ -115,8 +115,8 @@ if st.button("Generate FAQ", type="primary", disabled=not ready):
         st.session_state["_tx_name"] = transcript.name
     except Exception as e:
         if any(t in str(e) for t in ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED")):
-            st.error("Gemini is overloaded or rate-limited right now (Google-side, temporary). "
-                     "Wait a minute and click Generate again, or switch the model to gemini-2.5-pro.")
+            st.error("Gemini is overloaded or rate-limited right now — both models were tried. "
+                     "This is Google-side and temporary: wait a minute and click Generate again.")
         else:
             st.error(f"{type(e).__name__}: {e}")
         st.stop()

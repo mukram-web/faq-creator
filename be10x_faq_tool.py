@@ -439,20 +439,31 @@ def generate_faqs(transcript_text, mined_questions, has_chat, input_is_notes,
         from google import genai
         client = genai.Client(api_key=api_key or os.environ.get("GEMINI_API_KEY"))
         # The free tier routinely throws transient 503 (overloaded) / 429 (rate limit):
-        # retry with backoff before giving up.
-        for attempt in range(5):
-            try:
-                r = client.models.generate_content(
-                    model=model, contents=SYSTEM_PROMPT + "\n\n" + user_msg,
-                    config={"response_mime_type": "application/json"})
-                raw = r.text
+        # retry with backoff, then fall back to the other Gemini model before giving up.
+        _FALLBACK = {"gemini-2.5-flash": "gemini-2.5-pro", "gemini-2.5-pro": "gemini-2.5-flash"}
+        models_to_try = [model] + ([_FALLBACK[model]] if model in _FALLBACK else [])
+        raw, last_err = None, None
+        for m in models_to_try:
+            for attempt in range(3):
+                try:
+                    r = client.models.generate_content(
+                        model=m, contents=SYSTEM_PROMPT + "\n\n" + user_msg,
+                        config={"response_mime_type": "application/json"})
+                    raw = r.text
+                    break
+                except Exception as e:
+                    last_err = e
+                    transient = any(t in str(e) for t in
+                                    ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "overloaded"))
+                    if not transient:
+                        raise
+                    if attempt < 2:
+                        time.sleep(2 ** (attempt + 1))  # 2, 4 s
+            if raw is not None:
                 break
-            except Exception as e:
-                transient = any(t in str(e) for t in
-                                ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "overloaded"))
-                if not transient or attempt == 4:
-                    raise
-                time.sleep(2 ** (attempt + 1))          # 2, 4, 8, 16 s
+            print(f"[warn] {m} unavailable, trying fallback model", file=sys.stderr)
+        if raw is None:
+            raise last_err
     elif provider == "anthropic":                       # <-- paid
         import anthropic
         client = anthropic.Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"))
