@@ -435,12 +435,24 @@ def generate_faqs(transcript_text, mined_questions, has_chat, input_is_notes,
         with urllib.request.urlopen(req, timeout=900) as r:
             raw = json.loads(r.read().decode())["message"]["content"]
     elif provider == "gemini":                          # <-- free cloud tier
+        import time
         from google import genai
         client = genai.Client(api_key=api_key or os.environ.get("GEMINI_API_KEY"))
-        r = client.models.generate_content(
-            model=model, contents=SYSTEM_PROMPT + "\n\n" + user_msg,
-            config={"response_mime_type": "application/json"})
-        raw = r.text
+        # The free tier routinely throws transient 503 (overloaded) / 429 (rate limit):
+        # retry with backoff before giving up.
+        for attempt in range(5):
+            try:
+                r = client.models.generate_content(
+                    model=model, contents=SYSTEM_PROMPT + "\n\n" + user_msg,
+                    config={"response_mime_type": "application/json"})
+                raw = r.text
+                break
+            except Exception as e:
+                transient = any(t in str(e) for t in
+                                ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "overloaded"))
+                if not transient or attempt == 4:
+                    raise
+                time.sleep(2 ** (attempt + 1))          # 2, 4, 8, 16 s
     elif provider == "anthropic":                       # <-- paid
         import anthropic
         client = anthropic.Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"))
