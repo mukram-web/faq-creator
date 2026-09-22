@@ -4,7 +4,7 @@ validate.py — structural check for a Be10X FAQ .docx.
 
 House style = exactly 35 paragraphs:
   [0] eyebrow  [1] title  [2] subtitle  [3] accent rule  [4] source note
-  then 15 × ( Q# heading , A answer )  = 30
+  then 15 × ( question heading , answer )  = 30
 All text runs must be Arial; the footer must carry PAGE/NUMPAGES fields.
 
     python validate.py <file.docx>      -> "All validations PASSED!" or a list of failures
@@ -36,10 +36,10 @@ def validate(path):
     else:
         for idx in range(15):
             q, a = qa[idx * 2], qa[idx * 2 + 1]
-            if not q.text.strip().startswith("Q."):
-                errors.append(f"Q heading {idx + 1} malformed: {q.text[:50]!r}")
-            if not a.text.strip().startswith("A."):
-                errors.append(f"A{idx + 1} malformed: {a.text[:50]!r}")
+            if not q.text.strip():
+                errors.append(f"question {idx + 1} is empty")
+            if not a.text.strip():
+                errors.append(f"answer {idx + 1} is empty")
 
     bad_fonts = {r.font.name for p in paras for r in p.runs if r.font.name and r.font.name != "Arial"}
     if bad_fonts:

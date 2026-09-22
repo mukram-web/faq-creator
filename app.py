@@ -149,5 +149,5 @@ if res:
 
     with st.expander("Preview the 15 Q&A"):
         for q, a in res["faqs"]:
-            st.markdown(f"**Q. {q}**")
+            st.markdown(f"**{q}**")
             st.write(a)

@@ -152,6 +152,7 @@ local batch use.)
 
 ## House style (baked in, don't need to touch)
 
-US Letter, 1" margins, Arial. Navy `#1F3A5F` titles, accent `#2E75B6` rules and `Q.` labels, grey
-`#6B7280` subtitle/source/footer. Eyebrow → title → subtitle → accent rule → source note → 15× (bold
-unnumbered `Q.` heading + prose `A.`), page-numbered footer. 35 paragraphs, validates clean.
+US Letter, 1" margins, Arial. Navy `#1F3A5F` titles, accent `#2E75B6` rules, grey `#6B7280`
+subtitle/source/footer. Eyebrow → title → subtitle → accent rule → source note → 15× (bold navy
+question + plain prose answer, no Q/A labels or numbering), page-numbered footer. 35 paragraphs,
+validates clean.

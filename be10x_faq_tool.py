@@ -257,11 +257,9 @@ def build_docx(session: dict, out_path: Path):
         h = doc.add_paragraph()
         h.paragraph_format.keep_with_next = True
         h.paragraph_format.space_before = Pt(11); h.paragraph_format.space_after = Pt(3)
-        _run(h, "Q.  ", size=12, color=ACCENT, bold=True)
         _run(h, q, size=12, color=NAVY, bold=True)
         b = doc.add_paragraph()
         b.paragraph_format.space_after = Pt(3); b.paragraph_format.line_spacing = 1.15
-        _run(b, "A.  ", size=11, color=ACCENT, bold=True)
         _run(b, a, size=11)
 
     # footer: left text + right "Page X of Y", top border
